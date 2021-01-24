@@ -1,0 +1,25 @@
+{
+    "python.pythonPath": ".venv\\Scripts\\python.exe",
+    "python.terminal.executeInFileDir": false,
+    "python.terminal.activateEnvironment": true,
+    "python.terminal.launchArgs": [],
+    "python.autoComplete.extraPaths": [],
+    "python.formatting.autopep8Args": [
+        "--ignore",
+        "E402"
+    ],
+    "python.formatting.provider": "black",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": true,
+        "source.fixAll": true
+    },
+    "python.analysis.extraPaths": [],
+    "terminal.integrated.env.windows": {
+        "PATH": "${env:PATH};${workspaceFolder}\\scripts"
+    },
+    "files.insertFinalNewline": true,
+    "editor.formatOnPaste": false,
+    "editor.formatOnSaveMode": "file",
+    "jupyter.notebookFileRoot": "${workspaceFolder}"
+}

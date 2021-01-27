@@ -2,6 +2,6 @@
 setlocal
 cd "%~dp0.."
 
-python -m tools.predict %*
+python -m tools.fetch %*
 
 endlocal

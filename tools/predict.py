@@ -6,7 +6,6 @@ from typing import List
 
 import pandas as pd
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from highlighter.predict import Predictor
 from highlighter.train import Trainer
 from highlighter.utils.load import DataSetLoader, VideoChatsData

@@ -2,7 +2,6 @@ import datetime
 import os
 import sys
 
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
 from highlighter.utils.load import DataSetLoader
 from highlighter.utils.predict import enumerate_fvs_df
 

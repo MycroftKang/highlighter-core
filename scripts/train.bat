@@ -5,6 +5,6 @@ cd "%~dp0.."
 call scripts/prepare.bat
 call .venv\Scripts\activate
 
-python tools/train.py %*
+python -m tools.train %*
 
 endlocal

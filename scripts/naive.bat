@@ -2,6 +2,6 @@
 setlocal
 cd "%~dp0.."
 
-python tools/naive.py %*
+python -m tools.naive %*
 
 endlocal

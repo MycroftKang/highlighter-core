@@ -129,7 +129,7 @@ dmypy.json
 .pyre/
 events.out.tfevents*
 
-temp_*.py
+temp_*
 highlighter/cache/
 highlighter/logs/
 cache/
@@ -138,4 +138,4 @@ ckpts/
 notebooks/predict.ipynb
 models/
 logs/
-highlighter/fetch.py
+log.txt

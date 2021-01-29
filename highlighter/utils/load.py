@@ -1,7 +1,6 @@
 import logging
 import os
 import re
-from io import StringIO
 
 import pandas as pd
 
@@ -96,8 +95,16 @@ class DataSetLoader:
                 print(f"Read {dirpath}/{fn}")
         return chats
 
-    def loads_chats(self, string):
-        return pd.read_csv(StringIO(string))
+    def load_chats_by_vid(self, vid):
+        for fname in os.listdir(self.chats_dir):
+            m = re.match(rf"chats-{vid}-(?P<vlen>(?:\d+.)?\d+).csv", fname)
+            if m:
+                meta = m.groupdict()
+                return VideoChatsData(
+                    vid,
+                    float(meta["vlen"]),
+                    chats=pd.read_csv(f"{self.chats_dir}/{fname}"),
+                )
 
     def load_hls(self):
         """

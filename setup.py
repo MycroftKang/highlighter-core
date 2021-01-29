@@ -8,7 +8,7 @@ setuptools.setup(
     author="Mycroft Kang",
     author_email="taet777@naver.com",
     description="Finds Highlights From Recorded Live Videos.",
-    packages=["highlighter"],
+    packages=["highlighter", "highlighter.utils"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

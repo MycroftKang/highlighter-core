@@ -5,6 +5,8 @@ from io import StringIO
 
 import pandas as pd
 
+from .path import MODULE_ROOT_PATH
+
 log = logging.getLogger(__name__)
 
 
@@ -36,7 +38,9 @@ class VideoDataSet(VideoChatsData, VideoHlsData):
 
 class DataSetLoader:
     def __init__(
-        self, chats_dir="twitch-data/chats", hls_dir="twitch-data/hls"
+        self,
+        chats_dir=f"{MODULE_ROOT_PATH}/twitch-data/chats",
+        hls_dir=f"{MODULE_ROOT_PATH}/twitch-data/hls",
     ) -> None:
         self.chats_dir = chats_dir
         self.hls_dir = hls_dir

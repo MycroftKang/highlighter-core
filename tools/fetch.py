@@ -43,7 +43,7 @@ for i, vid in enumerate(targets):
     e2 = time.time()
 
     df.to_csv(
-        f"twitch-data/chats/chats-{vid}-{vlen}.csv",
+        f"highlighter/twitch-data/chats/chats-{vid}-{vlen}.csv",
         index=False,
         columns=["time", "username", "chat"],
     )

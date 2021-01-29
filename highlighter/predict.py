@@ -4,17 +4,16 @@ import pandas as pd
 import tensorflow as tf
 
 from .utils.load import VideoChatsData
+from .utils.path import MODULE_ROOT_PATH
 from .utils.predict import get_fv_df_from_chats
 
-DEFAULT_MODEL_DIR = os.path.join(os.path.dirname(__file__), "models")
+DEFAULT_MODEL_DIR = os.path.join(MODULE_ROOT_PATH, "models")
 
 
 class Predictor:
-    def __init__(self, model_dir=None, win_size=25) -> None:
+    def __init__(self, model_dir=DEFAULT_MODEL_DIR, win_size=25) -> None:
         self.win_size = win_size
-        self.imported = tf.saved_model.load(
-            model_dir if model_dir is not None else DEFAULT_MODEL_DIR
-        )
+        self.imported = tf.saved_model.load(model_dir)
 
     def predict(self, df: pd.DataFrame):
         examples = [

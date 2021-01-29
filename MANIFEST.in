@@ -1,1 +1,2 @@
 recursive-include highlighter/models *
+recursive-include highlighter/twitch-data *

@@ -1,6 +1,7 @@
 import logging
 import os
 import re
+from io import StringIO
 
 import pandas as pd
 
@@ -90,6 +91,9 @@ class DataSetLoader:
                 )
                 print(f"Read {dirpath}/{fn}")
         return chats
+
+    def loads_chats(self, string):
+        return pd.read_csv(StringIO(string))
 
     def load_hls(self):
         """

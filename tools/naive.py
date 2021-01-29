@@ -5,7 +5,11 @@ import sys
 from highlighter.utils.load import DataSetLoader
 from highlighter.utils.predict import enumerate_fvs_df
 
-target = "chats-848395376-43020.0.csv" if len(sys.argv) < 2 else sys.argv[1]
+if "-f" in sys.argv and len(sys.argv) > sys.argv.index("-f") + 1:
+    target = sys.argv[sys.argv.index("-f") + 1]
+else:
+    target = "chats-840859405-11853.csv"
+
 
 chats = DataSetLoader().load_chats(target)
 win_size = 25

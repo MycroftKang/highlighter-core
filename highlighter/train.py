@@ -30,13 +30,16 @@ def make_predict_input_fn(data_df, batch_size=32):
 
 
 class Trainer:
-    def __init__(self, win_size=25, non_hls_size=5, use_cache=True) -> None:
+    def __init__(
+        self, model_dir=".models", win_size=25, non_hls_size=5, use_cache=True
+    ) -> None:
         self.linear_est = tf.estimator.LinearClassifier(
             feature_columns=feature_columns, model_dir="ckpts"
         )
         self.win_size = win_size
         self.non_hls_size = non_hls_size
         self.use_cache = use_cache
+        self.model_dir = model_dir
 
     def train(self, dftrain, y_train):
         train_input_fn = make_input_fn(dftrain, y_train)
@@ -83,18 +86,21 @@ class Trainer:
 
         self.train(dftrain, y_train)
         result = self.evaluate(dfeval, y_eval)
+        model_path = None
         if save_model:
-            self.save_model()
+            model_path = self.save_model()
         if report:
             Reporter.report["runtime"] = round(time.time() - s, 2)
             Reporter.report["result"] = {str(k): float(v) for k, v in result.items()}
-            Reporter.save()
+            Reporter.save(model_path.replace("\\", "/").split("/")[1] if model_path is not None else None)
         return result
 
     def save_model(self):
         serving_input_fn = tf.estimator.export.build_parsing_serving_input_receiver_fn(
             tf.feature_column.make_parse_example_spec(feature_columns)
         )
-        estimator_path = self.linear_est.export_saved_model("models", serving_input_fn)
+        estimator_path = self.linear_est.export_saved_model(
+            self.model_dir, serving_input_fn
+        )
         print(estimator_path)
         return estimator_path

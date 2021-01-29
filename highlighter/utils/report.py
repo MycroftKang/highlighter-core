@@ -4,7 +4,7 @@ import time
 import yaml
 
 os.makedirs("logs", exist_ok=True)
-REPORT_FILE_NAME = f"logs/{round(time.time())}.yml"
+REPORT_INIT_TIME = time.time()
 
 
 class Reporter:
@@ -17,8 +17,10 @@ class Reporter:
     }
 
     @classmethod
-    def save(cls):
-        with open(REPORT_FILE_NAME, "wt", encoding="utf-8") as f:
+    def save(cls, file_name=None):
+        if file_name is None:
+            file_name = REPORT_INIT_TIME
+        with open(f"logs/{file_name}.yml", "wt", encoding="utf-8") as f:
             yaml.dump(cls.report, f, sort_keys=False)
         print()
         print(yaml.dump(cls.report, sort_keys=False))

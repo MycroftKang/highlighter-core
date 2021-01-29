@@ -136,6 +136,6 @@ cache/
 ckpts/
 
 notebooks/predict.ipynb
-models/
+.models/
 logs/
 log.txt

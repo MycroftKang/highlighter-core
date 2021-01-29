@@ -1,22 +1,20 @@
+import os
+
 import pandas as pd
 import tensorflow as tf
 
 from .utils.load import VideoChatsData
 from .utils.predict import get_fv_df_from_chats
 
-
-def make_input_fn(data_df, batch_size=32):
-    def input_function():
-        ds = tf.data.Dataset.from_tensor_slices(dict(data_df)).batch(batch_size)
-        return ds
-
-    return input_function
+DEFAULT_MODEL_DIR = os.path.join(os.path.dirname(__file__), "models")
 
 
 class Predictor:
-    def __init__(self, model_dir, win_size=25) -> None:
+    def __init__(self, model_dir=None, win_size=25) -> None:
         self.win_size = win_size
-        self.imported = tf.saved_model.load(model_dir)
+        self.imported = tf.saved_model.load(
+            model_dir if model_dir is not None else DEFAULT_MODEL_DIR
+        )
 
     def predict(self, df: pd.DataFrame):
         examples = [

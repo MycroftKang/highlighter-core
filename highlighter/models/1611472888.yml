@@ -1,0 +1,25 @@
+runtime: 4.8
+dataset:
+  hls: 81
+  non_hls: 405
+  total: 486
+train:
+  hls: 56
+  non_hls: 283
+  total: 339
+test:
+  hls: 25
+  non_hls: 122
+  total: 147
+result:
+  accuracy: 0.9387755393981934
+  accuracy_baseline: 0.8299319744110107
+  auc: 0.9872130751609802
+  auc_precision_recall: 0.9431692957878113
+  average_loss: 0.18704143166542053
+  label/mean: 0.17006802558898926
+  loss: 0.18665280938148499
+  precision: 1.0
+  prediction/mean: 0.17366789281368256
+  recall: 0.6399999856948853
+  global_step: 880.0

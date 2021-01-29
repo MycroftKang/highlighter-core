@@ -1,7 +1,7 @@
 import time
 
 import pandas as pd
-from highlighter.fetch import TwitchCrawler
+from highlighter.utils.fetch import TwitchCrawler
 
 CLIENT_ID = ""
 BEARER_TOKEN = ""

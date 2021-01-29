@@ -1,17 +1,16 @@
 import datetime
-import os
 import sys
 from time import time
 from typing import List
 
-import pandas as pd
-
-from highlighter.predict import Predictor
-from highlighter.train import Trainer
 from highlighter.utils.load import DataSetLoader, VideoChatsData
 from highlighter.utils.predict import enumerate_fvs_df
 
-target = "chats-848395376-43020.0.csv" if len(sys.argv) < 2 else sys.argv[1]
+if "-f" in sys.argv and len(sys.argv) > sys.argv.index("-f") + 1:
+    target = sys.argv[sys.argv.index("-f") + 1]
+else:
+    target = "chats-840859405-11853.csv"
+
 chats = DataSetLoader().load_chats(target)
 
 
@@ -37,22 +36,28 @@ def print_hls(vid, top, win_size):
 
 
 def trainer_predict():
+    from highlighter.train import Trainer
+
     trainer = Trainer()
+    s = time()
+    print(time() - s)
     for vd in chats:
         top = trainer.get_hls(vd, 10)
         print_hls(vd.vid, top, trainer.win_size)
 
 
 def predictor_predict():
-    predictor = Predictor(r"models\1611472888")
+    from highlighter.predict import Predictor
+
+    predictor = Predictor()
+    s = time()
     for vd in chats:
         top = predictor.get_hls(vd, 10)
         print_hls(vd.vid, top, predictor.win_size)
+    print(time() - s)
 
 
-s = time()
-trainer_predict()
-print(time() - s)
-s = time()
-predictor_predict()
-print(time() - s)
+if "-t" in sys.argv:
+    trainer_predict()
+else:
+    predictor_predict()

@@ -40,11 +40,47 @@ class Predictor:
             columns=["class", "probability"],
         )
 
-    def get_hls(self, vd: VideoChatsData, num=3):
+    def extract_range(self, df: pd.DataFrame, probability=False):
+        df_len = len(df)
+        df_max_idx = df_len - 1
+        win = df.index.tolist()
+        out = []
+        t = 0
+
+        while df_len != t:
+            i = t
+            for i in range(i, df_len):
+                if (i < df_max_idx) and (win[i + 1] - win[i] > 2):
+                    break
+
+            if probability:
+                rg = (
+                    win[t] * self.win_size - 25,
+                    (win[i] + 1) * self.win_size,
+                    df["probability"].iloc[t],
+                )
+            else:
+                rg = (
+                    win[t] * self.win_size - 25,
+                    (win[i] + 1) * self.win_size,
+                )
+
+            out.append(rg)
+            t = i + 1
+
+        return out
+
+    def get_highlight_ranges(self, vd: VideoChatsData, num=3, probability=False):
         fv_df = get_fv_df_from_chats(vd, self.win_size)
+
         df = self.predict(fv_df)
-        return (
-            df.loc[df["class"] == 1]
-            .sort_values("probability", ascending=False)
-            .head(num)
-        )
+        df = df.loc[df["class"] == 1].sort_values("probability", ascending=False)
+        result = []
+
+        for i in range(num, len(df)):
+            result = self.extract_range(
+                df.iloc[:i].sort_index(), probability=probability
+            )
+            if len(result) == num:
+                return result
+        return result

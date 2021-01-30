@@ -63,7 +63,7 @@ class Trainer:
             columns=["class", "probability"],
         )
 
-    def get_hls(self, vd: VideoChatsData, num=3):
+    def get_highlights(self, vd: VideoChatsData, num=3):
         fv_df = get_fv_df_from_chats(vd, self.win_size)
         df = self.predict(fv_df)
         return (

@@ -12,7 +12,7 @@ log = logging.getLogger(__name__)
 class VideoBaseData:
     def __init__(self, vid, vlen) -> None:
         self.vid = vid
-        self.vlen = float(vlen)
+        self.vlen = int(vlen)
 
 
 class VideoChatsData(VideoBaseData):
@@ -30,7 +30,7 @@ class VideoHlsData(VideoBaseData):
 class VideoDataSet(VideoChatsData, VideoHlsData):
     def __init__(self, vid, vlen, chats, hls) -> None:
         self.vid = vid
-        self.vlen = float(vlen)
+        self.vlen = int(vlen)
         self.chats = chats
         self.hls = hls
 

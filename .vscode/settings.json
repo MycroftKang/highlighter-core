@@ -21,5 +21,17 @@
     "files.insertFinalNewline": true,
     "editor.formatOnPaste": false,
     "editor.formatOnSaveMode": "file",
-    "jupyter.notebookFileRoot": "${workspaceFolder}"
+    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    "python.testing.unittestEnabled": true,
+    "python.testing.cwd": "${workspaceFolder}",
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./tests",
+        "-p",
+        "*test*.py"
+    ],
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "python.testing.pytestEnabled": false,
+    "python.testing.nosetestsEnabled": false,
 }

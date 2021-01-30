@@ -6,12 +6,12 @@ from typing import List
 from highlighter.utils.load import DataSetLoader, VideoChatsData
 from highlighter.utils.predict import enumerate_fvs_df
 
-if "-f" in sys.argv and len(sys.argv) > sys.argv.index("-f") + 1:
-    target = sys.argv[sys.argv.index("-f") + 1]
+if "-i" in sys.argv and len(sys.argv) > sys.argv.index("-i") + 1:
+    target = sys.argv[sys.argv.index("-i") + 1]
 else:
-    target = "chats-840859405-11853.csv"
+    target = "840859405"
 
-chats = DataSetLoader().load_chats(target)
+vcd = DataSetLoader().load_chats_by_vid(target)
 
 
 def get_hls_from_vds(vds: List[VideoChatsData], trainer, num=3):
@@ -35,15 +35,24 @@ def print_hls(vid, top, win_size):
     print("\n".join(ls))
 
 
+def print_hls_for_predictor(vid, top, win_size):
+    print()
+    ls = [f"Video ID: {vid}", "time | probability"]
+    for st, et, pr in top:
+        s = datetime.timedelta(seconds=st)
+        e = datetime.timedelta(seconds=et)
+        ls.append(f"{s} ~ {e} | {pr}")
+    print("\n".join(ls))
+
+
 def trainer_predict():
     from highlighter.train import Trainer
 
     trainer = Trainer()
     s = time()
     print(time() - s)
-    for vd in chats:
-        top = trainer.get_hls(vd, 10)
-        print_hls(vd.vid, top, trainer.win_size)
+    top = trainer.get_highlights(vcd, 10)
+    print_hls(vcd.vid, top, trainer.win_size)
 
 
 def predictor_predict():
@@ -51,9 +60,8 @@ def predictor_predict():
 
     predictor = Predictor()
     s = time()
-    for vd in chats:
-        top = predictor.get_hls(vd, 10)
-        print_hls(vd.vid, top, predictor.win_size)
+    hls = predictor.get_highlight_ranges(vcd, 10, probability=True)
+    print_hls_for_predictor(vcd.vid, hls, predictor.win_size)
     print(time() - s)
 
 

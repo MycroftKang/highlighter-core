@@ -5,17 +5,17 @@ import sys
 from highlighter.utils.load import DataSetLoader
 from highlighter.utils.predict import enumerate_fvs_df
 
-if "-f" in sys.argv and len(sys.argv) > sys.argv.index("-f") + 1:
-    target = sys.argv[sys.argv.index("-f") + 1]
+if "-i" in sys.argv and len(sys.argv) > sys.argv.index("-i") + 1:
+    target = sys.argv[sys.argv.index("-i") + 1]
 else:
-    target = "chats-840859405-11853.csv"
+    target = "840859405"
 
 
-chats = DataSetLoader().load_chats(target)
+chats = DataSetLoader().load_chats_by_vid(target)
 win_size = 25
 
 print()
-for vid, t in enumerate_fvs_df(chats, win_size):
+for vid, t in enumerate_fvs_df([chats], win_size):
     top = t.sort_values("num", ascending=False).head(10)
     print("Video ID: ", vid)
     print("time | num | len")

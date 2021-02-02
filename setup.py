@@ -16,7 +16,7 @@ setuptools.setup(
     ],
     include_package_data=True,
     install_requires=[
-        "tensorflow>=2.4.0",
+        "tensorflow-cpu>=2.4.1",
         "sklearn>=0.0",
         "pandas>=1.2.0",
         "pygit2>=1.4.0",

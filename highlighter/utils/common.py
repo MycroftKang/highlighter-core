@@ -13,12 +13,16 @@ def get_empty_dataframe(columns: list):
     return gdf
 
 
-def get_fv_df(vlen, df, columns, columns_to_norm, fv_fn, win_size):
-    cur = 0
-    ls = []
-    while cur < vlen:
-        ls.append(fv_fn(df, cur, cur + win_size))
-        cur += win_size
-    temp_df = pd.DataFrame(ls, columns=columns)
-    temp_df[columns_to_norm] = temp_df[columns_to_norm].apply(lambda x: x / x.max())
-    return temp_df
+def get_fv_df(vlen, df: pd.DataFrame, columns_to_norm, fv_fn, win_size):
+    df = (
+        df.assign(
+            chat=lambda x: x.chat.apply(lambda t: len(t)),
+            range=pd.cut(df["time"], range(0, vlen, win_size)),
+        )
+        .groupby("range")
+        .apply(fv_fn)
+    )
+
+    df[columns_to_norm] = df[columns_to_norm].apply(lambda x: x / x.max())
+
+    return df

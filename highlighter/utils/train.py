@@ -20,23 +20,27 @@ def get_twitch_data_commit_sha():
     return sm.head_id
 
 
-def get_feature_vec(chats: pd.DataFrame, hls: pd.DataFrame, start: int, end: int):
+def get_feature_vec(chats: pd.DataFrame, hls: pd.DataFrame):
     """
     return (num, len, hl)
     """
-    tar = chats[chats["time"].between(start, end)]
-    logging.debug(tar)
-    mean = tar["chat"].apply(lambda x: len(x)).mean(skipna=True) if not tar.empty else 0
-    return (
-        len(tar),
-        mean,
-        int(
+
+    if not chats.empty:
+        start = chats.range.iloc[0].left
+        end = chats.range.iloc[0].right
+        chat_len = chats["chat"].mean(skipna=True)
+        hl = int(
             hls.apply(
                 lambda x: max(start, x["start"]) < min(end, x["end"]), axis=1
             ).any()
         )
-        if not hls.empty
-        else 0,
+    else:
+        chat_len = 0
+        hl = 0
+
+    return pd.Series(
+        [len(chats), chat_len, hl],
+        index=["num", "len", "hl"],
     )
 
 
@@ -53,9 +57,8 @@ def to_data_frame(vds: List[VideoDataSet], win_size, use_cache=True):
             temp = common.get_fv_df(
                 v.vlen,
                 v.chats,
-                ["num", "len", "hl"],
                 ["num", "len"],
-                lambda _df, _s, _e: get_feature_vec(_df, v.hls, _s, _e),
+                lambda _df: get_feature_vec(_df, v.hls),
                 win_size,
             )
             validate_highlights(temp, v.hls, win_size)
@@ -68,12 +71,11 @@ def to_data_frame(vds: List[VideoDataSet], win_size, use_cache=True):
 
 
 def validate_highlights(df: pd.DataFrame, hls: pd.DataFrame, win_size):
-    for _, row in hls.iterrows():
-        s = row["start"]
-        e = row["end"]
+    for row in hls.itertuples():
+        s = row.start
+        e = row.end
         mask = df.apply(
-            lambda x: max(s, x.name * win_size) < min(e, (x.name + 1) * win_size),
-            axis=1,
+            lambda x: max(s, x.name.left) < min(e, x.name.right), axis=1
         ).values
         if list(mask).count(True) > 1:
             df.loc[mask & (df.index != df.loc[mask]["num"].idxmax()), "hl"] = 0

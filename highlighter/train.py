@@ -92,7 +92,11 @@ class Trainer:
         if report:
             Reporter.report["runtime"] = round(time.time() - s, 2)
             Reporter.report["result"] = {str(k): float(v) for k, v in result.items()}
-            Reporter.save(model_path.replace("\\", "/").split("/")[1] if model_path is not None else None)
+            Reporter.save(
+                str(model_path).replace("\\", "/").split("/")[1]
+                if model_path is not None
+                else None
+            )
         return result
 
     def save_model(self):

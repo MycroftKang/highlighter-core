@@ -1,3 +1,4 @@
+import heapq
 import os
 
 import pandas as pd
@@ -21,11 +22,11 @@ class Predictor:
                 features=tf.train.Features(
                     feature={
                         k: tf.train.Feature(float_list=tf.train.FloatList(value=[v]))
-                        for k, v in row.items()
+                        for k, v in zip(["num", "len"], [row.num, row.len])
                     }
                 )
             ).SerializeToString()
-            for _, row in df.iterrows()
+            for row in df.itertuples()
         ]
 
         result = self.imported.signatures["predict"](
@@ -34,53 +35,49 @@ class Predictor:
 
         return pd.DataFrame(
             [
-                [class_id[0], result["probabilities"][idx][class_id[0]].numpy()]
-                for idx, class_id in enumerate(result["class_ids"].numpy())
+                [class_id[0], prob[class_id[0]]]
+                for class_id, prob in zip(
+                    result["class_ids"].numpy(), result["probabilities"].numpy()
+                )
             ],
             columns=["class", "probability"],
         )
 
-    def extract_range(self, df: pd.DataFrame, probability=False):
+    def extract_range(self, df: pd.DataFrame):
         df_len = len(df)
         df_max_idx = df_len - 1
         win = df.index.tolist()
         out = []
         t = 0
 
-        while df_len != t:
-            i = t
-            for i in range(i, df_len):
-                if (i < df_max_idx) and (win[i + 1] - win[i] > 2):
-                    break
-
-            if probability:
+        for i in range(df_len):
+            if df_max_idx == i or win[i + 1] - win[i] > 2:
                 rg = (
                     win[t] * self.win_size - 25,
                     (win[i] + 1) * self.win_size,
                     df["probability"].iloc[t],
                 )
-            else:
-                rg = (
-                    win[t] * self.win_size - 25,
-                    (win[i] + 1) * self.win_size,
-                )
 
-            out.append(rg)
-            t = i + 1
+                t = i + 1
+
+                out.append(rg)
 
         return out
 
-    def get_highlight_ranges(self, vd: VideoChatsData, num=3, probability=False):
+    def get_highlight_ranges(self, vd: VideoChatsData, num=3):
         fv_df = get_fv_df_from_chats(vd, self.win_size)
 
         df = self.predict(fv_df)
-        df = df.loc[df["class"] == 1].sort_values("probability", ascending=False)
-        result = []
+        df = df.loc[df["class"] == 1]
 
-        for i in range(num, len(df)):
-            result = self.extract_range(
-                df.iloc[:i].sort_index(), probability=probability
-            )
-            if len(result) == num:
-                return result
+        result = self.extract_range(df)
+
+        if num != 0 and len(result) > num:
+            result = [
+                v
+                for (_, v) in sorted(
+                    heapq.nlargest(num, enumerate(result), lambda x: x[1][2])
+                )
+            ]
+
         return result

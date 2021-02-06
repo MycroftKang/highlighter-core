@@ -38,6 +38,10 @@ def print_hls(vid, top, win_size):
 def print_hls_for_predictor(vid, top, win_size):
     print()
     ls = [f"Video ID: {vid}", "time | probability"]
+    if len(top) == 0:
+        print("None")
+        return
+
     for st, et, pr in top:
         s = datetime.timedelta(seconds=st)
         e = datetime.timedelta(seconds=et)
@@ -50,8 +54,8 @@ def trainer_predict():
 
     trainer = Trainer()
     s = time()
-    print(time() - s)
     top = trainer.get_highlights(vcd, 10)
+    print(time() - s)
     print_hls(vcd.vid, top, trainer.win_size)
 
 
@@ -60,9 +64,9 @@ def predictor_predict():
 
     predictor = Predictor()
     s = time()
-    hls = predictor.get_highlight_ranges(vcd, 10, probability=True)
-    print_hls_for_predictor(vcd.vid, hls, predictor.win_size)
+    hls = predictor.get_highlight_ranges(vcd, 10)
     print(time() - s)
+    print_hls_for_predictor(vcd.vid, hls, predictor.win_size)
 
 
 if "-t" in sys.argv:

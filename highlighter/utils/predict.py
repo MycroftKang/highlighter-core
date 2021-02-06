@@ -9,21 +9,21 @@ from .load import VideoChatsData
 log = logging.getLogger(__name__)
 
 
-def get_feature_vec(chats: pd.DataFrame, start: int, end: int):
+def get_feature_vec(chats: pd.DataFrame):
     """
     return (num, len)
     """
-    tar = chats[chats["time"].between(start, end)]
-    logging.debug(tar)
-    mean = tar["chat"].apply(lambda x: len(x)).mean(skipna=True) if not tar.empty else 0
-    return len(tar), mean
+    return pd.Series(
+        [len(chats), chats["chat"].mean(skipna=True) if not chats.empty else 0],
+        index=["num", "len"],
+    )
 
 
 def to_fv_df(vds: List[VideoChatsData], win_size=25):
     gdf = common.get_empty_dataframe(["num", "len"])
     for v in vds:
         temp = common.get_fv_df(
-            v.vlen, v.chats, ["num", "len"], ["num", "len"], get_feature_vec, win_size
+            v.vlen, v.chats, ["num", "len"], get_feature_vec, win_size
         )
         gdf = gdf.append(temp, ignore_index=True)
     log.debug(gdf)
@@ -33,13 +33,12 @@ def to_fv_df(vds: List[VideoChatsData], win_size=25):
 def enumerate_fvs_df(vds: List[VideoChatsData], win_size=25):
     for v in vds:
         temp = common.get_fv_df(
-            v.vlen, v.chats, ["num", "len"], ["num", "len"], get_feature_vec, win_size
+            v.vlen, v.chats, ["num", "len"], get_feature_vec, win_size
         )
         yield (v.vid, temp)
 
 
 def get_fv_df_from_chats(vd: VideoChatsData, win_size=25):
-    temp = common.get_fv_df(
-        vd.vlen, vd.chats, ["num", "len"], ["num", "len"], get_feature_vec, win_size
+    return common.get_fv_df(
+        vd.vlen, vd.chats, ["num", "len"], get_feature_vec, win_size
     )
-    return temp

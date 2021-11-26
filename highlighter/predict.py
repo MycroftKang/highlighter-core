@@ -12,8 +12,11 @@ DEFAULT_MODEL_DIR = os.path.join(MODULE_ROOT_PATH, "models")
 
 
 class Predictor:
-    def __init__(self, model_dir=DEFAULT_MODEL_DIR, win_size=25) -> None:
+    def __init__(
+        self, model_dir=DEFAULT_MODEL_DIR, win_size=25, adjustment_value=25
+    ) -> None:
         self.win_size = win_size
+        self.adjustment_value = adjustment_value
         self.imported = tf.saved_model.load(model_dir)
 
     def predict(self, df: pd.DataFrame):
@@ -53,7 +56,7 @@ class Predictor:
         for i in range(df_len):
             if df_max_idx == i or win[i + 1] - win[i] > 2:
                 rg = (
-                    win[t] * self.win_size - 25,
+                    win[t] * self.win_size - self.adjustment_value,
                     (win[i] + 1) * self.win_size,
                     df["probability"].iloc[t],
                 )

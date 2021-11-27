@@ -162,3 +162,19 @@ class TwitchCrawler:
         asyncio.run(asyncio.wait(tasks))
 
         return storage.get_result()
+
+    @staticmethod
+    def get_twitch_token(client_id, client_secret):
+        params = {
+            "client_id": client_id,
+            "client_secret": client_secret,
+            "grant_type": "client_credentials",
+            "scope": "clips:edit",  # may be added further later for analytics
+        }
+
+        r = requests.post("https://id.twitch.tv/oauth2/token", params=params)
+        r.raise_for_status()
+
+        bearer_token = r.json()["access_token"]
+
+        return bearer_token

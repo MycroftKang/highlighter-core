@@ -1,6 +1,6 @@
 import asyncio
 import datetime
-import time
+import re
 
 import aiohttp
 import pandas as pd
@@ -125,10 +125,17 @@ class TwitchCrawler:
         self.bearer_token = bearer_token
 
     def duration_to_int(self, tstr):
-        a = time.strptime(tstr, "%Hh%Mm%Ss")
-        return datetime.timedelta(
-            hours=a.tm_hour, minutes=a.tm_min, seconds=a.tm_sec
-        ).seconds
+        if m := re.match(
+            r"(?:(?P<hour>\d+)h)?(?:(?P<min>\d+)m)?(?:(?P<sec>\d+)s)?", tstr
+        ):
+            a = m.groupdict()
+            a = {k: int(v) if v is not None else 0 for k, v in a.items()}
+
+            return datetime.timedelta(
+                hours=a["hour"], minutes=a["min"], seconds=a["sec"]
+            ).seconds
+        else:
+            raise ValueError
 
     def get_video_duration(self, vid):
         vidHeaders = {
